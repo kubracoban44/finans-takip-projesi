@@ -4,7 +4,7 @@ import { Grid } from "@mui/material";
 import HeaderAppBar from "./HeaderAppBar";
 import TotalIncome from "./TotalIncome";
 import IncomeCategoryChart from "./IncomeCategoryChart";
-// test github
+
 const Dashboard = () => {
     return (
         <HeaderAppBar>

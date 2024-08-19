@@ -27,6 +27,7 @@ const Category = (props) => {
         { label: 'Kırmızı', color: '#FF0000' },
         { label: 'Sarı', color: '#FFFF00' },
         { label: 'Mavi', color: '#0000FF' },
+        { label: 'Mor', color: '#660099' },
     ]
 
     useEffect(() => {
