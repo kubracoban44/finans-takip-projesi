@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import HeaderAppBar from "./HeaderAppBar";
-import { Button } from "@mui/material";
+import { Button, CardActions } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 import Modal from "@mui/material/Modal";
 import Income from "./Income";
-import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, doc, deleteDoc, where, query } from "firebase/firestore";
 import { db } from "./firebase";
 
 
@@ -72,6 +73,7 @@ const IncomeList = (props) => {
 
             renderCell: (params) => {
                 return (
+
                     <Box>
                         <Button
                             variant="contained"
@@ -102,31 +104,33 @@ const IncomeList = (props) => {
     };
     const handleDelete = async (id) => {
         if (props.isFirebaseEnable) {
-            try{
-                const docRef=doc(db,'incomeEntries',id);
+            try {
+                const docRef = doc(db, 'incomeEntries', id);
                 await deleteDoc(docRef);
+                setRows(prevRows => prevRows.filter(row => row.id !== id));
             }
-            catch(error){
-                console.error('döküman silinirken hata oluştu',error);
+            catch (error) {
+                console.error('döküman silinirken hata oluştu', error);
             }
-                
-               
-            
+
+
+
         }
         else {
             const updatedRows = rows.filter(row => row.id !== id);
             setRows(updatedRows);
             localStorage.setItem('incomeEntries', JSON.stringify(updatedRows));
         }
-    
+
     }
     const navigate = useNavigate();
-
+    const user = JSON.parse(localStorage.getItem('currentUser')) || {};
     useEffect(() => {
         if (props.isFirebaseEnable) {
             //datayı firebaseden çekiyorum..
             const getData = async () => {
-                const querySnapshot = await getDocs(collection(db, 'incomeEntries'));
+                const q = query(collection(db, 'incomeEntries'), where("userId", "==", user.uid));
+                const querySnapshot = await getDocs(q);
                 const incomeList = querySnapshot.docs.map(doc => {
                     return ({ ...doc.data(), id: doc.id })
                 });
@@ -173,67 +177,74 @@ const IncomeList = (props) => {
 
     return (
         <HeaderAppBar>
+            <Card
+                sx={{ maxWidth: 1200 }}>
 
-            <Button onClick={handleOpen}>EKLE</Button>
-            <DataGrid
-                rows={rows}
-                columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5]}
-                checkboxSelection
-                disableSelectionOnClick
-                processRowUpdate={handleRowEdit}
-                autoHeight
-            />
-            <div>
+                <Button onClick={handleOpen}>EKLE</Button>
+                <CardActions>
+                <CardContent>
+                <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    checkboxSelection
+                    disableSelectionOnClick
+                    processRowUpdate={handleRowEdit}
+                    autoHeight
+                />
+                <div>
 
 
-                <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box sx={style} >
-                        <Income
-                            onSave={() => {
-                                setOpen(false);
-                                if (props.isFirebaseEnable) {
-                                    const getData = async () => {
-                                        const querySnapshot = await getDocs(collection(db, 'incomeEntries'));
-                                        const incomeList = querySnapshot.docs.map(doc => {
-                                            return ({ ...doc.data(), id: doc.id })
-                                        });
-                                        setRows(incomeList);
+                    <Modal
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={style} >
+                            <Income
+                                onSave={() => {
+                                    setOpen(false);
+                                    if (props.isFirebaseEnable) {
+                                        const getData = async () => {
+                                            const q = query(collection(db, 'incomeEntries'), where("userId", "==", user.uid))
+                                            const querySnapshot = await getDocs(q);
+                                            const incomeList = querySnapshot.docs.map(doc => {
+                                                return ({ ...doc.data(), id: doc.id })
+                                            });
+                                            setRows(incomeList);
 
-                                    };
-                                    getData();
+                                        };
+                                        getData();
 
+                                    }
+                                    else {
+                                        let x = JSON.parse(localStorage.getItem('incomeEntries')) || [];
+                                        const user = JSON.parse(localStorage.getItem("currentUser"));
+                                        x = x.filter(x => x.userId == user.id);
+                                        setRows(x);
+                                    }
                                 }
-                                else {
-                                    let x = JSON.parse(localStorage.getItem('incomeEntries')) || [];
-                                    const user = JSON.parse(localStorage.getItem("currentUser"));
-                                    x = x.filter(x => x.userId == user.id);
-                                    setRows(x);
                                 }
-                            }
-                            }
 
 
 
 
-                            id={categoryId}
-                            isFirebaseEnable={props.isFirebaseEnable}
-                        >
+                                id={categoryId}
+                                isFirebaseEnable={props.isFirebaseEnable}
+                            >
 
-                        </Income>
+                            </Income>
 
-                    </Box>
+                        </Box>
 
-                </Modal>
+                    </Modal>
 
-            </div>
-
+                </div>
+                </CardContent>
+                </CardActions>
+            </Card>
 
         </HeaderAppBar>
     );

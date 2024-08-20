@@ -31,46 +31,46 @@ const Category = (props) => {
     ]
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            const q = query(collection(db, "categoryList"), where("userId", "==", "currentUserId"));
-            const querySnapShot = await getDocs(q);
-            const categoriesList = querySnapShot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setCategories(categoriesList);
-        };
-        fetchCategories();
+        if (props.isFirebaseEnable) {
+            const fetchCategories = async () => {
+                const q = query(collection(db, "categoryList"), where("userId", "==", user.uid));
+                const querySnapShot = await getDocs(q);
+                const categoriesList = querySnapShot.docs.map(doc => ({  ...doc.data(),id: doc.id }));
+                setCategories(categoriesList);
+            };
+            fetchCategories();
+        }
     }, []);
 
-
-
     useEffect(() => {
-       if(props.id){
-        if (props.isFirebaseEnable) {
-            const fetchCategory = async () => {
-                const categoryRef = doc(db, "categories", props.id);
-                const categoryDoc = await getDoc(categoryRef);
-                if (categoryDoc.exists()) {
-                    const categoryData = categoryDoc.data();
-                    setCategoryName(categoryData.categoryName);
-                    setCategoryCode(categoryData.categoryCode);
-                    setIncomeExpense(categoryData.incomeExpense);
-                    setColor(categoryData.color);
+        if (props.id) {
+            if (props.isFirebaseEnable) {
+                const fetchCategory = async () => {
+                    const categoryRef = doc(db, "categories", props.id);
+                    const categoryDoc = await getDoc(categoryRef);
+                    if (categoryDoc.exists()) {
+                        const categoryData = categoryDoc.data();
+                        setCategoryName(categoryData.categoryName);
+                        setCategoryCode(categoryData.categoryCode);
+                        setIncomeExpense(categoryData.incomeExpense);
+                        setColor(categoryData.color);
+                    }
+                };
+                fetchCategory();
+            }
+
+
+            if (!props.isFirebaseEnable) {
+                let categoryList = JSON.parse(localStorage.getItem("categoryList")) || [];
+                let category = categoryList.find(x => x.id == props.id);
+                if (category) {
+                    setCategoryName(category.categoryName);
+                    setCategoryCode(category.categoryCode);
+                    setIncomeExpense(category.incomeExpense);
+                    setColor(category.color);
                 }
-            };
-            fetchCategory();
-        }
-
-
-        if (!props.isFirebaseEnable) {
-            let categoryList = JSON.parse(localStorage.getItem("categoryList")) || [];
-            let category = categoryList.find(x => x.id == props.id);
-            if (category) {
-                setCategoryName(category.categoryName);
-                setCategoryCode(category.categoryCode);
-                setIncomeExpense(category.incomeExpense);
-                setColor(category.color);
             }
         }
-       }
     }, [props.id]);
 
     const handleSave = async () => {
@@ -89,7 +89,7 @@ const Category = (props) => {
                     categoryCode,
                     incomeExpense,
                     color,
-                    userId: user.id
+                    userId: user.uid
                 });
             }
             else {
@@ -99,7 +99,7 @@ const Category = (props) => {
                     categoryCode,
                     incomeExpense,
                     color,
-                    userId: user.id
+                    userId: user.uid
 
                 });
             }

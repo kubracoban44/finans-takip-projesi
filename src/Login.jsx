@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import LoginAppBar from './LoginAppBar';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './firebase';
+import firebase from 'firebase/compat/app';
 
 
 const Login = () => {
@@ -35,43 +36,55 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        signInWithEmailAndPassword(auth, formData.email, formData.password)
-            .then((response) => {
+        if (false) {
 
-                const validationErrors = validate();
-                setErrors(validationErrors);
-                if (Object.keys(validationErrors).length === 0) {
-                    const users = JSON.parse(localStorage.getItem("users")) || [];
-                    const user = users.find(
-                        (user) =>
-                            user.email === formData.email &&
-                            user.password === formData.password
-                    );
+            const validationErrors = validate();
+            setErrors(validationErrors);
+            if (Object.keys(validationErrors).length === 0) {
+                const users = JSON.parse(localStorage.getItem("users")) || [];
+                const user = users.find(
+                    (user) =>
+                        user.email === formData.email &&
+                        user.password === formData.password
+                );
 
-                    if (user) {
+                if (user) {
 
-                        localStorage.setItem("currentUser", JSON.stringify(user));
-                        setSuccessMessage("Giriş başarılı! Dashboard'a yönlendiriliyorsunuz...");
-                        setErrorMessage("");
-                        console.log("User logged in", user);
+                    localStorage.setItem("currentUser", JSON.stringify(user));
+                    setSuccessMessage("Giriş başarılı! Dashboard'a yönlendiriliyorsunuz...");
+                    setErrorMessage("");
+                    console.log("User logged in", user);
 
 
-                        setTimeout(() => {
-                            window.location.href = "/dashboard"; // Dashboard'a yönlendirme
-                        }, 1000);
-                    } else {
+                    setTimeout(() => {
+                        window.location.href = "/dashboard"; // Dashboard'a yönlendirme
+                    }, 1000);
+                } else {
 
-                        setErrorMessage("Kullanıcı adı veya şifre hatalı.");
-                        setSuccessMessage("");
-                    }
+                    setErrorMessage("Kullanıcı adı veya şifre hatalı.");
+                    setSuccessMessage("");
                 }
-            }).catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                alert(errorMessage);
-              });
+            }
+        }
+        else {
+            signInWithEmailAndPassword(auth, formData.email, formData.password)
+                .then((response) => {
+                    localStorage.setItem("currentUser", JSON.stringify(response.user));
+                    setTimeout(() => {
+                        window.location.href = "/dashboard"; // Dashboard'a yönlendirme
+                    }, 1000);
+
+                }).catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert(errorMessage);
+                });
+        }
+
+
 
     }
+
 
 
 

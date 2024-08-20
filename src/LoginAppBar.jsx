@@ -29,7 +29,7 @@ const pageList = [
 ]
 
 
-const LoginAppBar= ({children}) => {
+const LoginAppBar = ({ children }) => {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const navigate = useNavigate();
@@ -51,11 +51,16 @@ const LoginAppBar= ({children}) => {
         setAnchorElUser(null);
     };
 
+
     return (
-        <AppBar position='static'>
-            <Container maxWidth="xl">
-                <Toolbar>
+
+        <AppBar position="static">
+            <Container maxWidth="lg">
+
+                <Toolbar >
+               
                     <Typography
+                    
                         variant="h6"
                         noWrap
                         component="a"
@@ -67,9 +72,11 @@ const LoginAppBar= ({children}) => {
                             fontWeight: 700,
                             letterSpacing: '.3rem',
                             color: 'inherit',
-                            textDecoration: 'none',
+                            textDecoration: 'none'
+
                         }}
                     >
+                    
                         Financial Viewer
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -108,7 +115,7 @@ const LoginAppBar= ({children}) => {
                             ))}
                         </Menu>
                     </Box>
-                    
+
                     <Typography
                         variant="h5"
                         noWrap
@@ -140,6 +147,7 @@ const LoginAppBar= ({children}) => {
                         ))}
                     </Box>
                 </Toolbar>
+
                 <div>{children}</div>
             </Container>
         </AppBar>

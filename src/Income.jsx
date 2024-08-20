@@ -16,16 +16,30 @@ const Income = (props) => {
     const [incomeEntries, setIncomeEntries] = useState([]);
     const [amount, setAmount] = useState('');
     const [selectedCategory, setSelectedCategory] = useState();
+    const user = JSON.parse(localStorage.getItem('currentUser')) || {};
+
     useEffect(() => {
-        const fetchCategories = async () => {
-
-            const categoriesSnapshot = await getDocs(collection(db, "categories"));
-            const categoriesList = categoriesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setCategories(categoriesList);
-        };
-
-        fetchCategories();
+        if (props.isFirebaseEnable) {
+            const fetchCategories = async () => {
+                const q = query(collection(db, "categories"), where("userId", "==", user.uid));
+                const querySnapShot = await getDocs(q);
+                const categoriesList = querySnapShot.docs.map(doc => ({  ...doc.data(),id: doc.id }));
+                setCategories(categoriesList);
+            };
+            fetchCategories();
+        }
     }, []);
+
+    // useEffect(() => {
+    //     const fetchCategories = async () => {
+
+    //         const categoriesSnapshot = await getDocs(collection(db, "categories"));
+    //         const categoriesList = categoriesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    //         setCategories(categoriesList);
+    //     };
+
+    //     fetchCategories();
+    // }, []);
 
     useEffect(() => {
         if (props.id) {
@@ -36,7 +50,7 @@ const Income = (props) => {
                         incomeQuery = query(incomeQuery, where("category.id", "==", selectedCategory.id));
                     }
                     const querySnapshot = await getDocs(incomeQuery);
-                    const incomeList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    const incomeList = querySnapshot.docs.map(doc => ({ ...doc.data(),id: doc.id  }));
                     const income = incomeList.find(entry => entry.id === props.id);
                     if (income) {
                         setAmount(income.amount.toString());
@@ -78,7 +92,8 @@ const Income = (props) => {
                 category: selectedCategory,
                 amount: parseFloat(amount),
                 categoryName: selectedCategory.categoryName,
-                categoryCode: selectedCategory.categoryCode
+                categoryCode: selectedCategory.categoryCode,
+                userId:user.uid
             };
             try {
                 if (props.id) {

@@ -29,6 +29,7 @@ const HeaderAppBar = ({ children }) => {
     const handleIncomeList = () => {
         navigate('/Incomelist');
     }
+   
     return (
         <Container maxWidth="lg">
             <AppBar position="static">
@@ -69,6 +70,8 @@ const HeaderAppBar = ({ children }) => {
                         color="inherit"
                         onClick={handleIncomeList}
                         sx={{ mr: 2 }}>income/Expense</Button>
+                        
+
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 
                     </Typography>
@@ -99,7 +102,7 @@ const HeaderAppBar = ({ children }) => {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            <MenuItem>{user.name}</MenuItem>
+                            <MenuItem>{user.email}</MenuItem>
                             <MenuItem onClick={handleLogout}>Çıkış</MenuItem>
 
                         </Menu>
