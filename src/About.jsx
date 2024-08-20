@@ -53,7 +53,8 @@ const About = () => {
                     Herhangi bir sorunuz veya geri bildirimleriniz için bize ulaşabilirsiniz:<br />
                     • Email: email@example.com<br />
                     • Telefon: +90 123 456 7890<br />
-                    • Sosyal Medya: Twitter, LinkedIn
+                    • Sosyal Medya: Twitter, LinkedIn<br/>
+                    • https://fimple.co.uk/
                 </Typography>
                 </Box>
             </div>
