@@ -13,26 +13,28 @@ import LoginAppBar from './LoginAppBar';
 import About from './About';
 import IncomeCategoryChart from './IncomeCategoryChart';
 import { Routes, Route } from 'react-router-dom';
+import { GlobalProvider } from './ApplicationContext';
 
 function App() {
   return (
     <div className="App">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/Home" element={<Home />} />
-        <Route path="/Login" element={<Login />} />
-        <Route path="/SignUp" element={<SignUp />} />
-        <Route path="/Dashboard" element={<Dashboard />} />
-        <Route path="/income" element={<Income />} />
-        <Route path="/HeaderAppBar" element={<HeaderAppBar />} />
-        <Route path="/Category" element={<Category isFirebaseEnable={true}/>} />
-        <Route path="/category-list" element={<CategoryList isFirebaseEnable={true}/>} />
-        <Route path="/IncomeList" element={<IncomeList isFirebaseEnable={true} />} />
-        <Route path="/LoginAppBar" element={<LoginAppBar />} />
-        <Route path="/IncomeCategoryChart" element={<IncomeCategoryChart />} />
-        <Route path="/About" element={<About />} />
-
-      </Routes>
+      <GlobalProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/Home" element={<Home />} />
+          <Route path="/Login" element={<Login />} />
+          <Route path="/SignUp" element={<SignUp />} />
+          <Route path="/Dashboard" element={<Dashboard />} />
+          <Route path="/income" element={<Income />} />
+          <Route path="/HeaderAppBar" element={<HeaderAppBar />} />
+          <Route path="/Category" element={<Category />} />
+          <Route path="/category-list" element={<CategoryList />} />
+          <Route path="/IncomeList" element={<IncomeList isFirebaseEnable={true} />} />
+          <Route path="/LoginAppBar" element={<LoginAppBar />} />
+          <Route path="/IncomeCategoryChart" element={<IncomeCategoryChart />} />
+          <Route path="/About" element={<About />} />
+        </Routes>
+      </GlobalProvider>
     </div>
   );
 }

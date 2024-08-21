@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Grid } from "@mui/material";
 
 import HeaderAppBar from "./HeaderAppBar";
@@ -6,28 +6,30 @@ import TotalIncome from "./TotalIncome";
 import IncomeCategoryChart from "./IncomeCategoryChart";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
+import { GlobalContext } from "./ApplicationContext";
 
 const Dashboard = () => {
-    const[user,setUser]=useState([]);
-    useEffect(()=>{
-        const unsubscribe=onAuthStateChanged(auth,(currentUser)=>{
-            if(currentUser){
+    const [user, setUser] = useState([]);
+    const {  isFirebaseEnable } = useContext(GlobalContext);
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
                 setUser(currentUser);
             }
-            else{
+            else {
                 setUser(null);
             }
         });
-        return()=>unsubscribe();
-    },[]);
+        return () => unsubscribe();
+    }, []);
     return (
         <HeaderAppBar>
             <Grid container>
                 <Grid item>
-                    <TotalIncome isFirebaseEnable={true}/>
+                    <TotalIncome isFirebaseEnable={true} />
                 </Grid>
                 <Grid item>
-                    <IncomeCategoryChart isFirebaseEnable={true}/>
+                    <IncomeCategoryChart isFirebaseEnable={true} />
                 </Grid>
             </Grid>
         </HeaderAppBar>

@@ -9,8 +9,10 @@ import HeaderAppBar from "./HeaderAppBar";
 import { collection, addDoc, updateDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import { db } from "./firebase";
 import { v4 as uuidv4 } from 'uuid';
+import {  useGlobalContext } from "./ApplicationContext";
 
 const Income = (props) => {
+    const {isFirebaseEnable}=useGlobalContext();
 
     const [categories, setCategories] = useState([]);
     const [incomeEntries, setIncomeEntries] = useState([]);
@@ -19,7 +21,7 @@ const Income = (props) => {
     const user = JSON.parse(localStorage.getItem('currentUser')) || {};
 
     useEffect(() => {
-        if (props.isFirebaseEnable) {
+        if (isFirebaseEnable) {
             const fetchCategories = async () => {
                 const q = query(collection(db, "categories"), where("userId", "==", user.uid));
                 const querySnapShot = await getDocs(q);
@@ -30,16 +32,6 @@ const Income = (props) => {
         }
     }, []);
 
-    // useEffect(() => {
-    //     const fetchCategories = async () => {
-
-    //         const categoriesSnapshot = await getDocs(collection(db, "categories"));
-    //         const categoriesList = categoriesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    //         setCategories(categoriesList);
-    //     };
-
-    //     fetchCategories();
-    // }, []);
 
     useEffect(() => {
         if (props.id) {
@@ -86,7 +78,7 @@ const Income = (props) => {
             return;
 
         }
-        if (props.isFirebaseEnable) {
+        if (isFirebaseEnable) {
             const entry = {
                 id: uuidv4(),
                 category: selectedCategory,
@@ -113,7 +105,7 @@ const Income = (props) => {
                 console.error("Error saving data: ", e);
             }
         }
-        if (!props.isFirebaseEnable) {
+        if (!isFirebaseEnable) {
 
             const user = JSON.parse(localStorage.getItem('currentUser')) || {};
             const existingEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];

@@ -9,6 +9,7 @@ import { Button, CardActions, Modal } from "@mui/material";
 import Category from "./Category";
 import { collection, deleteDoc, getDocs, doc, query, where } from "firebase/firestore";
 import { db } from "./firebase";
+import { useGlobalContext } from './ApplicationContext';
 
 const style = {
     position: 'absolute',
@@ -25,6 +26,8 @@ const style = {
 
 
 const CategoryList = (props) => {
+
+    const { isFirebaseEnable, updateFirebaseEnable } = useGlobalContext();
 
     const [categoryId, setCategoryId] = useState();
     const [open, setOpen] = React.useState(false);
@@ -43,7 +46,7 @@ const CategoryList = (props) => {
     const user = JSON.parse(localStorage.getItem('currentUser')) || {};
 
     useEffect(() => {
-        if (props.isFirebaseEnable) {
+        if (isFirebaseEnable) {
             const getData = async () => {
 
                 const q = query(collection(db, "categories"), where("userId", "==", user.uid));
@@ -56,7 +59,6 @@ const CategoryList = (props) => {
 
         }
         else {
-
             const storedData = localStorage.getItem('categoryList');
             if (storedData) {
                 let parsedData = JSON.parse(storedData);
@@ -147,7 +149,7 @@ const CategoryList = (props) => {
         setCategoryId(row.id);
     }
     const handleDelete = async (id) => {
-        if (props.isFirebaseEnable) {
+        if (isFirebaseEnable) {
             try {
                 const docRef = doc(db, 'categories', id);
                 await deleteDoc(docRef);
@@ -190,58 +192,57 @@ const CategoryList = (props) => {
 
                     <Button onClick={handleOpen}>EKLE</Button>
                     <CardActions>
-                    <CardContent>
-                        <DataGrid
-                            rows={rows}
-                            columns={columns}
-                            pageSize={5}
-                            rowsPerPageOptions={[5]}
-                            checkboxSelection
-                            disableSelectionOnClick
-                        />
-                        <div>
-                            <Modal
-                                open={open}
-                                onClose={handleClose}
-                                aria-labelledby="modal-modal-title"
-                                aria-describedby="modal-modal-description"
-                            >
-                                <Box sx={style}>
-                                    <Category
-                                        onSave={() => {
-                                            setOpen(false);
-                                            if (props.isFirebaseEnable) {
-                                                const getData = async () => {
+                        <CardContent>
+                            <DataGrid
+                                rows={rows}
+                                columns={columns}
+                                pageSize={5}
+                                rowsPerPageOptions={[5]}
+                                checkboxSelection
+                                disableSelectionOnClick
+                            />
+                            <div>
+                                <Modal
+                                    open={open}
+                                    onClose={handleClose}
+                                    aria-labelledby="modal-modal-title"
+                                    aria-describedby="modal-modal-description"
+                                >
+                                    <Box sx={style}>
+                                        <Category
+                                            onSave={() => {
+                                                setOpen(false);
+                                                if (isFirebaseEnable) {
+                                                    const getData = async () => {
 
-                                                    const q = query(collection(db, "categories"), where("userId", "==", user.uid));
-                                                    const querySnapShot = await getDocs(q);
-                                                    const categoriesList = querySnapShot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-                                                    setRows(categoriesList);
+                                                        const q = query(collection(db, "categories"), where("userId", "==", user.uid));
+                                                        const querySnapShot = await getDocs(q);
+                                                        const categoriesList = querySnapShot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+                                                        setRows(categoriesList);
 
-                                                };
-                                                getData();
+                                                    };
+                                                    getData();
+
+                                                }
+                                                else {
+                                                    let categoryList = JSON.parse(localStorage.getItem('categoryList')) || [];
+                                                    categoryList = categoryList.filter(x => x.userId == user.id);
+                                                    setRows(categoryList);
+                                                    //düzenle butonunda kaydet diyince burası çalışır
+                                                    //datagridin datası güncellenmeli
+                                                }
 
                                             }
-                                            else {
-                                                let categoryList = JSON.parse(localStorage.getItem('categoryList')) || [];
-                                                categoryList = categoryList.filter(x => x.userId == user.id);
-                                                setRows(categoryList);
-                                                //düzenle butonunda kaydet diyince burası çalışır
-                                                //datagridin datası güncellenmeli
                                             }
+                                            id={categoryId}
+                                        />
 
-                                        }
-                                        }
-                                        id={categoryId}
-                                        isFirebaseEnable={props.isFirebaseEnable}
-                                    />
-
-                                </Box>
+                                    </Box>
 
 
-                            </Modal>
-                        </div>
-                    </CardContent>
+                                </Modal>
+                            </div>
+                        </CardContent>
                     </CardActions>
                 </Box>
 

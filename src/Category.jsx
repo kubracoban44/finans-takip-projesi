@@ -9,13 +9,17 @@ import { db } from "./firebase";
 import { collection, addDoc, updateDoc, doc, getDocs, query, where, getDoc } from "firebase/firestore";
 import HeaderAppBar from "./HeaderAppBar";
 import { v4 as uuidv4 } from 'uuid';
+import { useGlobalContext } from './ApplicationContext';
 
 /*
 Düzenleme ile açıldıgında firestoredan data cekecek şekilde geliştirme yapılacak
 props.id dogru geldiginden emin olunmalı
-props.isFirebaseEnable true oldugunda firebaseden olmadıgında localstoragedan alınmalı.
+isFirebaseEnable true oldugunda firebaseden olmadıgında localstoragedan alınmalı.
  */
 const Category = (props) => {
+    const { isFirebaseEnable } = useGlobalContext();
+    
+
     const [categoryName, setCategoryName] = useState('');
     const [categoryCode, setCategoryCode] = useState('');
     const [incomeExpense, setIncomeExpense] = useState(null);
@@ -31,11 +35,11 @@ const Category = (props) => {
     ]
 
     useEffect(() => {
-        if (props.isFirebaseEnable) {
+        if (isFirebaseEnable) {
             const fetchCategories = async () => {
                 const q = query(collection(db, "categoryList"), where("userId", "==", user.uid));
                 const querySnapShot = await getDocs(q);
-                const categoriesList = querySnapShot.docs.map(doc => ({  ...doc.data(),id: doc.id }));
+                const categoriesList = querySnapShot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
                 setCategories(categoriesList);
             };
             fetchCategories();
@@ -44,7 +48,7 @@ const Category = (props) => {
 
     useEffect(() => {
         if (props.id) {
-            if (props.isFirebaseEnable) {
+            if (isFirebaseEnable) {
                 const fetchCategory = async () => {
                     const categoryRef = doc(db, "categories", props.id);
                     const categoryDoc = await getDoc(categoryRef);
@@ -60,7 +64,7 @@ const Category = (props) => {
             }
 
 
-            if (!props.isFirebaseEnable) {
+            if (!isFirebaseEnable) {
                 let categoryList = JSON.parse(localStorage.getItem("categoryList")) || [];
                 let category = categoryList.find(x => x.id == props.id);
                 if (category) {
@@ -80,7 +84,7 @@ const Category = (props) => {
         console.log('Renk:', color);
 
 
-        if (props.isFirebaseEnable) {
+        if (isFirebaseEnable) {
 
             if (props.id) {
                 const categoryRef = doc(db, "categories", props.id);
@@ -104,7 +108,7 @@ const Category = (props) => {
                 });
             }
         }
-        if (!props.isFirebaseEnable) {
+        if (!isFirebaseEnable) {
 
             const existingCategories = JSON.parse(localStorage.getItem('categoryList')) || [];
             if (props.id) {

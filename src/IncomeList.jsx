@@ -11,7 +11,7 @@ import Modal from "@mui/material/Modal";
 import Income from "./Income";
 import { collection, getDocs, doc, deleteDoc, where, query } from "firebase/firestore";
 import { db } from "./firebase";
-
+import { useGlobalContext } from "./ApplicationContext";
 
 const style = {
     position: 'absolute',
@@ -26,6 +26,7 @@ const style = {
 };
 
 const IncomeList = (props) => {
+    const { isFirebaseEnable, updateFirebaseEnable } = useGlobalContext();
 
     const [categoryId, setCategoryId] = useState();
     const [open, setOpen] = React.useState(false);
@@ -103,7 +104,7 @@ const IncomeList = (props) => {
 
     };
     const handleDelete = async (id) => {
-        if (props.isFirebaseEnable) {
+        if (isFirebaseEnable) {
             try {
                 const docRef = doc(db, 'incomeEntries', id);
                 await deleteDoc(docRef);
@@ -126,7 +127,7 @@ const IncomeList = (props) => {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('currentUser')) || {};
     useEffect(() => {
-        if (props.isFirebaseEnable) {
+        if (isFirebaseEnable) {
             //datayı firebaseden çekiyorum..
             const getData = async () => {
                 const q = query(collection(db, 'incomeEntries'), where("userId", "==", user.uid));
@@ -206,7 +207,7 @@ const IncomeList = (props) => {
                             <Income
                                 onSave={() => {
                                     setOpen(false);
-                                    if (props.isFirebaseEnable) {
+                                    if (isFirebaseEnable) {
                                         const getData = async () => {
                                             const q = query(collection(db, 'incomeEntries'), where("userId", "==", user.uid))
                                             const querySnapshot = await getDocs(q);
@@ -232,7 +233,7 @@ const IncomeList = (props) => {
 
 
                                 id={categoryId}
-                                isFirebaseEnable={props.isFirebaseEnable}
+                                
                             >
 
                             </Income>
