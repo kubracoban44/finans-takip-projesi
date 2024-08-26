@@ -27,7 +27,8 @@ const style = {
 
 const CategoryList = (props) => {
 
-    const { isFirebaseEnable, updateFirebaseEnable } = useGlobalContext();
+    const { isFirebaseEnable } = useGlobalContext();
+
 
     const [categoryId, setCategoryId] = useState();
     const [open, setOpen] = React.useState(false);
@@ -42,8 +43,8 @@ const CategoryList = (props) => {
 
 
     });
+    const user = useGlobalContext().user || JSON.parse(localStorage.getItem('currentUser')) || [];
 
-    const user = JSON.parse(localStorage.getItem('currentUser')) || {};
 
     useEffect(() => {
         if (isFirebaseEnable) {
@@ -59,6 +60,7 @@ const CategoryList = (props) => {
 
         }
         else {
+
             const storedData = localStorage.getItem('categoryList');
             if (storedData) {
                 let parsedData = JSON.parse(storedData);
@@ -70,7 +72,7 @@ const CategoryList = (props) => {
                 setRows(validRows);
             }
         }
-    }, []);
+    }, [isFirebaseEnable]);
 
     const columns = [
 

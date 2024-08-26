@@ -2,15 +2,17 @@ import React, { useState, useEffect } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { collection, getDocs, doc, where, query } from "firebase/firestore";
 import { db } from "./firebase";
+import { useGlobalContext } from "./ApplicationContext";
 
 const IncomeCategoryChart = (props) => {
-    const user = JSON.parse(localStorage.getItem("currentUser"));
+    const user = useGlobalContext().user||JSON.parse(localStorage.getItem('currentUser'))||[];
+    const { isFirebaseEnable } = useGlobalContext();
     const [data, setData] = useState([]);
     const [series, setSeries] = useState([]);
     const [xAxisData, setXAxisData] = useState([]);
 
     useEffect(() => {
-        if (props.isFirebaseEnable) {
+        if (isFirebaseEnable) {
             const getData = async () => {
                 const queryIncome = query(collection(db, 'incomeEntries'), where("userId", "==", user.uid));
                 const querySnapshot = await getDocs(queryIncome);
@@ -88,7 +90,7 @@ const IncomeCategoryChart = (props) => {
             setSeries(seriesTemp);
             setData(categoryTotals);
         }
-    }, [user.uid, props.isFirebaseEnable]);
+    }, [user.uid, isFirebaseEnable]);
 
 
     return (
@@ -106,7 +108,7 @@ const IncomeCategoryChart = (props) => {
             series={[{ data: series }]}
             width={series.length * 100}
             height={300}
-            isFirebaseEnable={props.isFirebaseEnable}
+            isFirebaseEnable={isFirebaseEnable}
         />
     );
 }

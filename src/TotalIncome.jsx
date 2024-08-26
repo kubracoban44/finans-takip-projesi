@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { PieChart } from '@mui/x-charts/PieChart';
 import { collection, getDocs, doc, where, query } from "firebase/firestore";
 import { db } from "./firebase";
+import { useGlobalContext } from "./ApplicationContext";
 
 const a = [
     { id: 0, value: 10, label: 'Gelir' },
@@ -12,10 +13,11 @@ const a = [
 
 const TotalIncome = (props) => {
     const [totalData, setTotalData] = useState([]);
-    const user = JSON.parse(localStorage.getItem('currentUser')) || {};
+    const user = useGlobalContext().user||JSON.parse(localStorage.getItem('currentUser'))||[];
+    const { isFirebaseEnable } = useGlobalContext();
     useEffect(() => {
 
-        if (props.isFirebaseEnable) {
+        if (isFirebaseEnable) {
             const getData = async () => {
                 const q = query(collection(db, 'incomeEntries'), where("userId", "==", user.uid));
                 const querySnapShot = await getDocs(q);
@@ -67,7 +69,7 @@ const TotalIncome = (props) => {
 
 
 
-    }, [user.uid, props.isFirebaseEnable]);
+    }, [user.uid,isFirebaseEnable]);
 
     return (
         <PieChart
@@ -83,7 +85,7 @@ const TotalIncome = (props) => {
 
         >
 
-            isFirebaseEnable={props.isFirebaseEnable}
+            isFirebaseEnable={isFirebaseEnable}
 
         </PieChart>
 

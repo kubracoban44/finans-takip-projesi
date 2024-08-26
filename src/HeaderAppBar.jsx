@@ -22,14 +22,17 @@ const HeaderAppBar = ({ children }) => {
     const handleIncome = () => {
         navigate('/income');
     }
-   
+
     const handleCategoryList = () => {
         navigate('/category-list');
     }
     const handleIncomeList = () => {
         navigate('/Incomelist');
     }
-   
+    const handleProfile = () => {
+        navigate('/profil');
+    }
+
     return (
         <Container maxWidth="lg">
             <AppBar position="static">
@@ -60,8 +63,8 @@ const HeaderAppBar = ({ children }) => {
                     >
 
                     </IconButton>
-                    
-                    
+
+
                     <Button
                         color="inherit"
                         onClick={handleCategoryList}
@@ -70,7 +73,7 @@ const HeaderAppBar = ({ children }) => {
                         color="inherit"
                         onClick={handleIncomeList}
                         sx={{ mr: 2 }}>income/Expense</Button>
-                        
+
 
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 
@@ -103,7 +106,9 @@ const HeaderAppBar = ({ children }) => {
                             onClose={handleClose}
                         >
                             <MenuItem>{user.email}</MenuItem>
+                            <MenuItem onClick={handleProfile}>Profil</MenuItem>
                             <MenuItem onClick={handleLogout}>Çıkış</MenuItem>
+
 
                         </Menu>
                     </div>

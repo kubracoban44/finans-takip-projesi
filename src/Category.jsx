@@ -25,7 +25,7 @@ const Category = (props) => {
     const [incomeExpense, setIncomeExpense] = useState(null);
     const [color, setColor] = useState(null);
     const [categories, setCategories] = useState([]);
-    const user = JSON.parse(localStorage.getItem('currentUser')) || {};
+    const user = useGlobalContext().user||JSON.parse(localStorage.getItem('currentUser'))||[];
     const incomeExpenseOptions = ['Gelir', 'Gider'];
     const colorOptions = [
         { label: 'Kırmızı', color: '#FF0000' },
@@ -93,7 +93,8 @@ const Category = (props) => {
                     categoryCode,
                     incomeExpense,
                     color,
-                    userId: user.uid
+                    userId: user.uid,
+                    
                 });
             }
             else {
@@ -103,7 +104,8 @@ const Category = (props) => {
                     categoryCode,
                     incomeExpense,
                     color,
-                    userId: user.uid
+                    userId: user.uid,
+                  
 
                 });
             }
@@ -120,7 +122,8 @@ const Category = (props) => {
                             categoryCode,
                             incomeExpense,
                             color,
-                            userId: user.id
+                            userId: user.id,
+                           
                         };
                     }
                     return category;
@@ -137,7 +140,8 @@ const Category = (props) => {
                     categoryCode,
                     incomeExpense,
                     color,
-                    userId: user.id
+                    userId: user.id,
+                  
                 };
                 existingCategories.push(newCategory);
                 localStorage.setItem('categoryList', JSON.stringify(existingCategories));

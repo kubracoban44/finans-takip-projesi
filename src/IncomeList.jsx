@@ -38,6 +38,7 @@ const IncomeList = (props) => {
         amount: ''
 
     });
+    const user = useGlobalContext().user||JSON.parse(localStorage.getItem('currentUser'))||[];
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
         {
@@ -125,7 +126,7 @@ const IncomeList = (props) => {
 
     }
     const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem('currentUser')) || {};
+
     useEffect(() => {
         if (isFirebaseEnable) {
             //datayı firebaseden çekiyorum..

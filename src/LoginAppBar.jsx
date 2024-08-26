@@ -50,6 +50,7 @@ const LoginAppBar = ({ children }) => {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+    
 
 
     return (
@@ -120,7 +121,8 @@ const LoginAppBar = ({ children }) => {
                         variant="h5"
                         noWrap
                         component="a"
-                        href="/"
+                        href='/'
+
                         sx={{
                             mr: 2,
                             display: { xs: 'flex', md: 'none' },

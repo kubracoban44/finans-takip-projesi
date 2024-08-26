@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextField, Button, Card, CardContent, Typography, Grid, Box, Container } from "@mui/material";
 import {v4 as uuidv4 } from "uuid";
 import LoginAppBar from "./LoginAppBar";
 import {createUserWithEmailAndPassword}from "firebase/auth";
 import { auth } from "./firebase";
+import { useGlobalContext } from "./ApplicationContext";
 const SignUp = () => {
+    const{updateUser,isFirebaseEnable,updateFirebaseEnable}=useGlobalContext();
     const [formData, setFormData] = useState({
         id:uuidv4(),
         name: '',
@@ -15,7 +17,7 @@ const SignUp = () => {
         confirmPassword: ''
     });
     const [errors, setErrors] = useState({});
-    
+    const user = useGlobalContext().user||JSON.parse(localStorage.getItem('currentUser'))||[];
 
     const handleChange = (e) => {
         setFormData({
@@ -52,21 +54,27 @@ const SignUp = () => {
         }
         return errors;
     };
-
+    
     const handleSubmit = (e) => {
         e.preventDefault();
         
         createUserWithEmailAndPassword(auth,formData.email,formData.password)
-        .then(()=>{
+        .then((response)=>{
+            localStorage.setItem(JSON.stringify(response.user));
             alert('you have sign up');
+            const userData={
+                email:response.user.email,
+                uid:response.user.uid
+            }
+            updateUser(userData);
         })
         const validationErrors = validate();
         setErrors(validationErrors);
         if (Object.keys(validationErrors).length == 0) {
             
-            const users=JSON.parse(localStorage.getItem("users"))||[];
-            users.push(formData);
-            localStorage.setItem("users",JSON.stringify(users));
+            const user=JSON.parse(localStorage.getItem("currentUser"))||[];
+            user.push(formData);
+            localStorage.setItem("currentUser",JSON.stringify(user));
             alert("Kayıt Başarılı");
 
             console.log('form submited', formData);

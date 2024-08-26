@@ -5,9 +5,12 @@ import LoginAppBar from './LoginAppBar';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './firebase';
 import firebase from 'firebase/compat/app';
+import { useGlobalContext } from './ApplicationContext';
 
 
 const Login = () => {
+    
+    const{user,updateUser,isFirebaseEnable,updateFirebaseEnable}=useGlobalContext();
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -73,6 +76,12 @@ const Login = () => {
                     setTimeout(() => {
                         window.location.href = "/dashboard"; // Dashboard'a yönlendirme
                     }, 1000);
+                    const userData={
+                        email:response.user.email,
+                        uid:response.user.uid
+                        
+                    }
+                    updateUser(userData);
 
                 }).catch((error) => {
                     const errorCode = error.code;

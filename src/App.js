@@ -14,6 +14,7 @@ import About from './About';
 import IncomeCategoryChart from './IncomeCategoryChart';
 import { Routes, Route } from 'react-router-dom';
 import { GlobalProvider } from './ApplicationContext';
+import Profil from './Profil';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/LoginAppBar" element={<LoginAppBar />} />
           <Route path="/IncomeCategoryChart" element={<IncomeCategoryChart />} />
           <Route path="/About" element={<About />} />
+          <Route path='/Profil' element={<Profil/>}/>
         </Routes>
       </GlobalProvider>
     </div>

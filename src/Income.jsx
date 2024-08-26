@@ -12,13 +12,13 @@ import { v4 as uuidv4 } from 'uuid';
 import {  useGlobalContext } from "./ApplicationContext";
 
 const Income = (props) => {
-    const {isFirebaseEnable}=useGlobalContext();
+    const {updateUser,isFirebaseEnable}=useGlobalContext();
 
     const [categories, setCategories] = useState([]);
     const [incomeEntries, setIncomeEntries] = useState([]);
     const [amount, setAmount] = useState('');
     const [selectedCategory, setSelectedCategory] = useState();
-    const user = JSON.parse(localStorage.getItem('currentUser')) || {};
+    const user = useGlobalContext().user || JSON.parse(localStorage.getItem('currentUser')) || [];
 
     useEffect(() => {
         if (isFirebaseEnable) {
@@ -73,6 +73,7 @@ const Income = (props) => {
     }, [props.id]);
 
     const handleSave = async () => {
+       
         if (!selectedCategory || !amount) {
             alert("Lütfen bir kategori seçin ve tutarı girin.");
             return;
@@ -85,8 +86,10 @@ const Income = (props) => {
                 amount: parseFloat(amount),
                 categoryName: selectedCategory.categoryName,
                 categoryCode: selectedCategory.categoryCode,
-                userId:user.uid
+                userId:user.uid,
+               
             };
+           
             try {
                 if (props.id) {
                     // Güncelleme yap
@@ -104,6 +107,7 @@ const Income = (props) => {
             } catch (e) {
                 console.error("Error saving data: ", e);
             }
+           
         }
         if (!isFirebaseEnable) {
 
@@ -119,6 +123,7 @@ const Income = (props) => {
                             category: selectedCategory,
                             categoryName: selectedCategory.categoryName,
                             categoryCode: selectedCategory.categoryCode,
+                            updateUser
                         };
                     }
                     return income;
@@ -134,6 +139,7 @@ const Income = (props) => {
                     userId: user.id,
                     categoryName: selectedCategory.categoryName,
                     categoryCode: selectedCategory.categoryCode,
+                    updateUser
                 };
                 existingEntries.push(newIncome);
                 localStorage.setItem('incomeEntries', JSON.stringify(existingEntries));
