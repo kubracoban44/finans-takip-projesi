@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { auth, db } from './firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { onAuthStateChanged, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
+import { onAuthStateChanged, updatePassword, EmailAuthProvider, reauthenticateWithCredential, sendPasswordResetEmail } from "firebase/auth";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -19,6 +19,7 @@ const Profil = () => {
         currentPassword: ""
     });
     const [user, setUser] = useState(null);
+    const [resetEmail, setResetEmail] = useState("");
     const navigate = useNavigate();
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -48,6 +49,10 @@ const Profil = () => {
             [name]: value
         });
     };
+    const handleResetEmailChange = (e) => {
+        setResetEmail(e.target.value);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (user) {
@@ -71,6 +76,20 @@ const Profil = () => {
             }
         }
 
+    };
+    const handleResetPassword = async () => {
+        try {
+            if (resetEmail) {
+                await sendPasswordResetEmail(auth, resetEmail);
+                alert("Şifre sıfırlama e-postası gönderildi. Lütfen e-posta adresinizi kontrol edin.");
+                setResetEmail("");
+            } else {
+                alert("Lütfen geçerli bir e-posta adresi girin.");
+            }
+        } catch (error) {
+            console.error("Şifre sıfırlama hatası: ", error);
+            alert("Şifre sıfırlama e-postası gönderilirken bir hata oluştu.");
+        }
     }
 
 
@@ -155,6 +174,24 @@ const Profil = () => {
                         >
                             Güncelle
                         </Button>
+
+                    </Box>
+                    <Box sx={{ mt: 5, width: '100%' }}>
+                        <Typography variant="h6" component="h2" gutterBottom>
+
+                        </Typography>
+                        <Typography
+                            variant="body1"
+                            component="p"
+                            sx={{ cursor: 'pointer', color: 'primary.main' }}
+                            onClick={() => {
+                                navigate('/ForgotPassword');
+                            }}
+                        >
+                            Şifremi Unuttum
+                        </Typography>
+
+
 
                     </Box>
                 </Box>

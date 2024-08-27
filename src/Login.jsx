@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { TextField, Button, Card, CardContent, Typography, Container, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import LoginAppBar from './LoginAppBar';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './firebase';
 import firebase from 'firebase/compat/app';
 import { useGlobalContext } from './ApplicationContext';
+import LoginAppBar from './LoginAppBar';
 
 
 const Login = () => {
@@ -100,7 +100,7 @@ const Login = () => {
 
 
     return (
-        <LoginAppBar>
+       <LoginAppBar>
             <Container component="main" maxWidth="xs">
                 <Box
                     sx={{
@@ -156,7 +156,7 @@ const Login = () => {
                 </Box>
 
             </Container>
-        </LoginAppBar>
+            </LoginAppBar>
 
 
     );
